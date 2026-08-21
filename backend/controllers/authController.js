@@ -104,7 +104,7 @@ const login = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const {refreshToken} = req.cookies;
 
     if (!refreshToken) {
       return res.status(401).json({
@@ -137,8 +137,40 @@ const refreshAccessToken = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const {refreshToken} = req.cookies;
+
+    if (refreshToken) {
+      const user = await User.findOne({
+        refreshToken,
+      });
+
+      if (user) {
+        user.refreshToken = null;
+        await user.save();
+      }
+    }
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   refreshAccessToken,
+  logout,
 };
