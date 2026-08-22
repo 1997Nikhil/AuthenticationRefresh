@@ -6,33 +6,52 @@ import {
 } from "react";
 
 import api from "../api/axios";
-import { setAccessToken as storeAccessToken } from "../api/tokenStore";
+import {
+  setAccessToken as storeAccessToken,
+  clearAccessToken,
+} from "../api/tokenStore";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  const [accessToken, setAccessTokenState] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const setAccessToken = (token) => {
+    storeAccessToken(token);
+    setAccessTokenState(token);
+  };
 
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        const response = await api.post("/auth/refresh");
-
-        const token = response.data.accessToken;
-
-        storeAccessToken(token);
-        setAccessToken(token);
-
-        const userResponse = await api.get(
-          "/users/profile"
+        const response = await api.post(
+          "/auth/refresh"
         );
 
-        setUser(userResponse.data.user);
+        const token =
+          response.data.accessToken;
+
+        setAccessToken(token);
+
+        const profileResponse =
+          await api.get(
+            "/users/profile"
+          );
+
+        setUser(
+          profileResponse.data.user
+        );
       } catch (error) {
+        clearAccessToken();
+
+        setAccessTokenState(null);
         setUser(null);
-        setAccessToken(null);
       } finally {
         setLoading(false);
       }
@@ -47,10 +66,7 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         accessToken,
-        setAccessToken: (token) => {
-          storeAccessToken(token);
-          setAccessToken(token);
-        },
+        setAccessToken,
         loading,
       }}
     >
@@ -59,4 +75,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
