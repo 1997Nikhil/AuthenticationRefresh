@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
+import "./Auth.css";
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -38,13 +40,9 @@ const Login = () => {
         user,
       } = response.data;
 
-      // Store access token
       setAccessToken(accessToken);
-
-      // Store logged-in user
       setUser(user);
 
-      // Go to dashboard
       navigate("/dashboard");
     } catch (error) {
       setError(
@@ -57,55 +55,74 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
 
-      {error && (
-        <p style={{ color: "red" }}>
-          {error}
-        </p>
-      )}
+          <div className="auth-header">
+            <h1>Welcome Back</h1>
+            <p>
+              Login to your account
+            </p>
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
-            placeholder="Enter email"
-            required
-          />
+          <form onSubmit={handleSubmit}>
+
+            <div className="form-group">
+              <label>Email</label>
+
+              <input
+                type="email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Password</label>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+
+            <button
+              className="auth-button"
+              type="submit"
+              disabled={loading}
+            >
+              {loading
+                ? "Logging in..."
+                : "Login"}
+            </button>
+
+          </form>
+
+          <div className="auth-footer">
+            Don't have an account?{" "}
+            <Link to="/register">
+              Create Account
+            </Link>
+          </div>
+
         </div>
-
-        <div>
-          <label>Password</label>
-
-          <input
-            type="password"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-            placeholder="Enter password"
-            required
-          />
-        </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-
-      <p>
-        Don't have an account?{" "}
-        <Link to="/register">
-          Register
-        </Link>
-      </p>
+      </div>
     </div>
   );
 };

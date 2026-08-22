@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import api from "../api/axios";
+
+import "./Auth.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -43,7 +46,6 @@ const Register = () => {
         password: "",
       });
 
-      // Go to login after successful registration
       setTimeout(() => {
         navigate("/login");
       }, 1000);
@@ -58,72 +60,91 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
 
-      {error && (
-        <p style={{ color: "red" }}>
-          {error}
-        </p>
-      )}
+          <div className="auth-header">
+            <h1>Create Account</h1>
+            <p>
+              Register to get started
+            </p>
+          </div>
 
-      {success && (
-        <p style={{ color: "green" }}>
-          {success}
-        </p>
-      )}
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name</label>
+          {success && (
+            <div className="success-message">
+              {success}
+            </div>
+          )}
 
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter name"
-            required
-          />
+          <form onSubmit={handleSubmit}>
+
+            <div className="form-group">
+              <label>Name</label>
+
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Email</label>
+
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Password</label>
+
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Create a password"
+                required
+              />
+            </div>
+
+            <button
+              className="auth-button"
+              type="submit"
+              disabled={loading}
+            >
+              {loading
+                ? "Creating Account..."
+                : "Create Account"}
+            </button>
+
+          </form>
+
+          <div className="auth-footer">
+            Already have an account?{" "}
+            <Link to="/login">
+              Login
+            </Link>
+          </div>
+
         </div>
-
-        <div>
-          <label>Email</label>
-
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter email"
-            required
-          />
-        </div>
-
-        <div>
-          <label>Password</label>
-
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter password"
-            required
-          />
-        </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
-        </button>
-      </form>
-
-      <p>
-        Already have an account?{" "}
-        <Link to="/login">
-          Login
-        </Link>
-      </p>
+      </div>
     </div>
   );
 };

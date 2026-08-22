@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import "./index.css";
+
 function App() {
   return (
     <BrowserRouter>
