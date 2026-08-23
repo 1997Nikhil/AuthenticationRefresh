@@ -1,5 +1,8 @@
 # 🔐 JWT Authentication System — React + Node.js + MongoDB
 
+
+![alt text](352f9936-6637-4eee-87c0-5a76db467498.png)
+
 A complete full-stack authentication system built with **React.js, Node.js, Express.js, MongoDB, Mongoose, JWT, Axios, and bcrypt**.
 
 This project demonstrates a practical authentication architecture using:
