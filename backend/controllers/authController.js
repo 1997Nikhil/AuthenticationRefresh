@@ -74,10 +74,10 @@ const login = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    user.refreshToken = refreshToken;
-    await user.save();
+    user.refreshToken = refreshToken;  // Store the refresh token in the database
+    await user.save();  // Save the user with the new refresh token
 
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", refreshToken, {   // Set the refresh token as an HTTP-only cookie
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -87,7 +87,7 @@ const login = async (req, res) => {
     res.json({
       message: "Login successful",
 
-      accessToken,
+      accessToken,   // Return the access token in the response body
 
       user: {
         id: user._id,
@@ -104,7 +104,7 @@ const login = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
   try {
-    const {refreshToken} = req.cookies;
+    const {refreshToken} = req.cookies;   // Get the refresh token from the HTTP-only cookie
 
     if (!refreshToken) {
       return res.status(401).json({
@@ -112,7 +112,7 @@ const refreshAccessToken = async (req, res) => {
       });
     }
 
-    const decoded = jwt.verify(
+    const decoded = jwt.verify(   // Verify the refresh token using the secret key
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
@@ -125,10 +125,10 @@ const refreshAccessToken = async (req, res) => {
       });
     }
 
-    const newAccessToken = generateAccessToken(user);
+    const newAccessToken = generateAccessToken(user);   // Generate a new access token for the user
 
     res.json({
-      accessToken: newAccessToken,
+      accessToken: newAccessToken,   // Return the new access token in the response body
     });
   } catch (error) {
     return res.status(401).json({
@@ -147,12 +147,12 @@ const logout = async (req, res) => {
       });
 
       if (user) {
-        user.refreshToken = null;
+        user.refreshToken = null;    // Clear the refresh token from the user's record in the database
         await user.save();
       }
     }
 
-    res.clearCookie("refreshToken", {
+    res.clearCookie("refreshToken", {   // Clear the refresh token cookie from the client
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
